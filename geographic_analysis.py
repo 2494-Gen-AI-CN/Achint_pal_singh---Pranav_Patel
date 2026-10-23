@@ -92,5 +92,10 @@ if __name__ == "__main__":
 
 def pedestrians_involved(df):
 
-    records_with_pedestrain_involved = (df["PEDESTRIAN"] == "YES").sum()
-    return records_with_pedestrain_involved
+    records_with_pedestrian_involved = (df["PEDESTRIAN"] == "YES").sum()
+    return records_with_pedestrian_involved
+
+def bicycle_involved(df):
+
+    record_with_bicycle_involved = (df["BICYCLE"] == "YES").sum()
+    return record_with_bicycle_involved
