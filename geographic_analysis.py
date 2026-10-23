@@ -73,3 +73,19 @@ if __name__ == "__main__":
 
 # # Filtering by passengers involved 
 #filter_by_passenger_involved = filter_by_year[filter_by_year["PASSENGER"] == "YES"]
+
+
+#-------- END OF TICKET B1 --------------------
+
+def top_neighbourhoods(df, top_n=10):
+
+    records_without_NSA_and_NaN = df[(df["NEIGHBOURHOOD_158"] != "NSA") & (df["NEIGHBOURHOOD_158"].notna())]
+    top_ten_neighbourhood = records_without_NSA_and_NaN["NEIGHBOURHOOD_158"].value_counts()
+    return top_ten_neighbourhood.head(top_n)
+
+if __name__ == "__main__":
+    prepared_data = load_location_data(
+            "RawData/Traffic Collisions - 4326.csv"
+        )
+    result = top_neighbourhoods(prepared_data, 10)
+    print(result)
