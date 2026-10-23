@@ -108,4 +108,10 @@ if __name__ == "__main__":
     print(result_top)
     result_location_status = classify_location_status(prepared_data)
     print(result_location_status["Location_status"].value_counts())
+    result_pedestrian = pedestrians_involved(prepared_data)
+    print(result_pedestrian)
+    result_bicycle = bicycle_involved(prepared_data)
+    print(result_bicycle)
+    result_injury = injury_collision_involved(prepared_data)
+    print(result_injury)
     
