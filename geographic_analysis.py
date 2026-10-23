@@ -1,7 +1,9 @@
  
 # import the module pandas 
 import pandas as pd
+import numpy as np
 
+df = pd.read_csv("RawData/Traffic Collisions - 4326.csv")
 
 def load_location_data(csv_filepath):
     # Loading .csv file
@@ -24,16 +26,6 @@ def load_location_data(csv_filepath):
 
     # Return the final filteration 
     return final_filteration
-
-
-# For testing if the function produces correct output
-if __name__ == "__main__":
-    prepared_data = load_location_data(
-        "RawData/Traffic Collisions - 4326.csv"
-    )
-    print(prepared_data.shape)
-
-
 
 # # Validating Neighbourhood_158 column 
 # validate_neighbourhood = filter_by_year["NEIGHBOURHOOD_158"].value_counts(dropna=False)
@@ -83,12 +75,6 @@ def top_neighbourhoods(df, top_n=10):
     top_ten_neighbourhood = records_without_NSA_and_NaN["NEIGHBOURHOOD_158"].value_counts()
     return top_ten_neighbourhood.head(top_n)
 
-if __name__ == "__main__":
-    prepared_data = load_location_data(
-            "RawData/Traffic Collisions - 4326.csv"
-        )
-    result = top_neighbourhoods(prepared_data, 10)
-    print(result)
 
 def pedestrians_involved(df):
 
@@ -104,3 +90,22 @@ def injury_collision_involved(df):
 
     record_with_injury_collision = (df["INJURY_COLLISIONS"] == "YES").sum()
     return record_with_injury_collision
+
+def classify_location_status(df):
+    location_status = np.where((df["NEIGHBOURHOOD_158"] == "NSA") | df["NEIGHBOURHOOD_158"].isna(), "Unknown", "Known")
+
+    df["Location_status"] = location_status
+
+    return df
+
+# For testing if the function produces correct output
+if __name__ == "__main__":
+    prepared_data = load_location_data(
+        "RawData/Traffic Collisions - 4326.csv"
+    )
+    print(prepared_data.shape)
+    result_top = top_neighbourhoods(prepared_data, 10)
+    print(result_top)
+    result_location_status = classify_location_status(prepared_data)
+    print(result_location_status["Location_status"].value_counts())
+    
