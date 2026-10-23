@@ -67,7 +67,7 @@ def load_location_data(csv_filepath):
 #filter_by_passenger_involved = filter_by_year[filter_by_year["PASSENGER"] == "YES"]
 
 
-#-------- END OF TICKET B1 --------------------
+# END OF B1 Ticket
 
 # Function to return top 10 neighbourhoods with most collisions
 def top_neighbourhoods(df, top_n=10):
@@ -118,4 +118,5 @@ if __name__ == "__main__":
     print(result_bicycle)
     result_injury = injury_collision_involved(prepared_data)
     print(result_injury)
-    
+
+# END of B2 ticket
