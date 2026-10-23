@@ -89,3 +89,8 @@ if __name__ == "__main__":
         )
     result = top_neighbourhoods(prepared_data, 10)
     print(result)
+
+def pedestrians_involved(df):
+
+    records_with_pedestrain_involved = (df["PEDESTRIAN"] == "YES").sum()
+    return records_with_pedestrain_involved
