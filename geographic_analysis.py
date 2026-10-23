@@ -99,3 +99,8 @@ def bicycle_involved(df):
 
     record_with_bicycle_involved = (df["BICYCLE"] == "YES").sum()
     return record_with_bicycle_involved
+
+def injury_collision_involved(df):
+
+    record_with_injury_collision = (df["INJURY_COLLISIONS"] == "YES").sum()
+    return record_with_injury_collision
