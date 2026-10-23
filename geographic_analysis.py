@@ -69,28 +69,32 @@ def load_location_data(csv_filepath):
 
 #-------- END OF TICKET B1 --------------------
 
+# Function to return top 10 neighbourhoods with most collisions
 def top_neighbourhoods(df, top_n=10):
 
     records_without_NSA_and_NaN = df[(df["NEIGHBOURHOOD_158"] != "NSA") & (df["NEIGHBOURHOOD_158"].notna())]
     top_ten_neighbourhood = records_without_NSA_and_NaN["NEIGHBOURHOOD_158"].value_counts()
     return top_ten_neighbourhood.head(top_n)
 
-
+# Function to return collision involving pedestrian
 def pedestrians_involved(df):
 
     records_with_pedestrian_involved = (df["PEDESTRIAN"] == "YES").sum()
     return records_with_pedestrian_involved
 
+# Function to return collision involving bicycle
 def bicycle_involved(df):
 
     record_with_bicycle_involved = (df["BICYCLE"] == "YES").sum()
     return record_with_bicycle_involved
 
+# Function to return if injured 
 def injury_collision_involved(df):
 
     record_with_injury_collision = (df["INJURY_COLLISIONS"] == "YES").sum()
     return record_with_injury_collision
 
+# Function to add new column location status with field Unknown and Known 
 def classify_location_status(df):
     location_status = np.where((df["NEIGHBOURHOOD_158"] == "NSA") | df["NEIGHBOURHOOD_158"].isna(), "Unknown", "Known")
 
