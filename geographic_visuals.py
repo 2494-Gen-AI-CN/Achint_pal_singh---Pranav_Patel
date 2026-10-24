@@ -1,12 +1,10 @@
 import matplotlib.pyplot as plt
 from geographic_analysis import load_location_data
 from geographic_analysis import top_neighbourhoods
-
-
+from geographic_analysis import pedestrians_involved
+from geographic_analysis import bicycle_involved
 
 def plot_top_neighbourhood(df):
-
-    df = load_location_data("RawData/Traffic Collisions - 4326.csv")
 
     top_10 = top_neighbourhoods(df, 10)
 
@@ -18,7 +16,7 @@ def plot_top_neighbourhood(df):
 
     plt.gca().invert_yaxis()
 
-    plt.title("Top 10 Toronto Neighbourhood by Traffic collision (2024-2025)")
+    plt.title("Top 10 Toronto Neighbourhood by Traffic Collisions (2024-2025)")
 
     plt.ylabel("Neighbourhood in Toronto")
 
@@ -27,4 +25,33 @@ def plot_top_neighbourhood(df):
     plt.gca().bar_label(bar, padding=3)
 
     plt.show()
+
+
+def plot_pedestrian_and_bicycle_involved(df):
+
+    pedestrian = pedestrians_involved(df)
+    bicycle = bicycle_involved(df)
+    
+    plt.figure(figsize=(14,7))
+
+    plt.gca().invert_yaxis()
+
+    categories = ["Pedestrain", "Bicycle"]
+    value = [pedestrian, bicycle]
+    
+    bar = plt.barh(categories, value)
+    
+    plt.title("Pedestrian and Bicycle involved in Traffic Collisions (2024-2025)")
+    
+    plt.ylabel("Type of Road User")
+    
+    plt.xlabel("No of Collisions")
+    
+    plt.gca().bar_label(bar, padding=3)
+    
+    plt.show()
+
+if __name__ == "__main__":
+    #plot_top_neighbourhood(load_location_data("RawData/Traffic Collisions - 4326.csv"))
+    plot_pedestrian_and_bicycle_involved(load_location_data("RawData/Traffic Collisions - 4326.csv"))
 
