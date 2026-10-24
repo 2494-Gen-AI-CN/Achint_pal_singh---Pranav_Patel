@@ -70,8 +70,10 @@ def test_order_zero_bins_and_group_specific_exclusions(example_csv):
 def test_findings_report_ties(example_csv):
     df = load_temporal_data(example_csv)
     findings = key_findings(df)
-    assert "00:00-00:59" in findings[2]
-    assert "23:00-23:59" in findings[2]
+    # The finding now prints the peak table instead of formatting time ranges.
+    peak_rows = findings[2].splitlines()[2:]
+    reported_hours = [int(row.split()[0]) for row in peak_rows]
+    assert reported_hours == [0, 23]
 
 
 def test_empty_period_is_explicit_error(tmp_path):

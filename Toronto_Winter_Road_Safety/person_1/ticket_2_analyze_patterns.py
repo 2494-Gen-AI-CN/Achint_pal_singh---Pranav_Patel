@@ -1,133 +1,126 @@
-"""Ticket A2: calculate monthly, hourly and weekday collision patterns."""
+"""Ticket A2: read A1's prepared CSV and calculate collision patterns."""
 
-import argparse
-from pathlib import Path
-
-import numpy as np
 import pandas as pd
+import numpy as np
+import matplotlib
+matplotlib.use("Agg")  # Save plots without requiring a separate Windows GUI.
+import matplotlib.pyplot as plt
 
-from ticket_1_prepare_data import (
-    DEFAULT_CSV, MONTHS, WEEKDAYS, YEARS, load_temporal_data, print_inspection,
-)
+from ticket_A1 import MONTHS, WEEKDAYS
 
-
+# COLLISON HAS BEEN OCCUR IN THE MONTHS 
 def collisions_by_month(df):
-    """Return 24 rows: every year/month pair in chronological order."""
-    yearly_tables = []
-
-    for year in YEARS:
-        year_data = df[df["OCC_YEAR"] == year]
-        counts = year_data["OCC_MONTH"].value_counts()
-        counts = counts.reindex(MONTHS, fill_value=0)
-
-        table = counts.rename_axis("OCC_MONTH").reset_index(name="collisions")
-        table.insert(0, "OCC_YEAR", year)
-        yearly_tables.append(table)
-
-    return pd.concat(yearly_tables, ignore_index=True)
+    """Count each year/month pair, ordered January to December."""
+    data = df.copy()
+    data["OCC_MONTH"] = pd.Categorical(data["OCC_MONTH"], categories=MONTHS, ordered=True)
+    counts = data.groupby(["OCC_YEAR", "OCC_MONTH"], observed=False).size() # TO SEE IF WE ARE GETTING ALL THE MONTHS 
+    return counts.reset_index(name="collisions")
 
 
 def collisions_by_hour(df):
-    """Count the combined 2024-2025 records for each hour, 00 through 23."""
+    """Count each hour, ordered 0 to 23, combining both years."""
     counts = df["OCC_HOUR"].value_counts()
     counts = counts.reindex(np.arange(24), fill_value=0)
     return counts.rename_axis("OCC_HOUR").reset_index(name="collisions")
 
 
 def collisions_by_weekday(df):
-    """Count the combined records, ordered Monday through Sunday."""
+    """Count each weekday, ordered Monday to Sunday, combining both years."""
     counts = df["OCC_DOW"].value_counts()
     counts = counts.reindex(WEEKDAYS, fill_value=0)
     return counts.rename_axis("OCC_DOW").reset_index(name="collisions")
 
 
+def collisions_by_year(df):
+    counts = df["OCC_YEAR"].value_counts().reindex([2024, 2025], fill_value=0)
+    return counts.rename_axis("OCC_YEAR").reset_index(name="collisions")
+
+
 def verify_group_totals(df):
-    """Reconcile each grouping against records with a usable grouping value."""
-    summaries = [
+    """Check each count table against rows with that time value present."""
+    checks = []
+    for name, column, table in [
         ("Month", "OCC_MONTH", collisions_by_month(df)),
         ("Hour", "OCC_HOUR", collisions_by_hour(df)),
         ("Weekday", "OCC_DOW", collisions_by_weekday(df)),
-    ]
-    checks = []
-    for label, column, summary in summaries:
+    ]:
         eligible = int(df[column].notna().sum())
-        grouped = int(summary["collisions"].sum())
-        if eligible != grouped:
-            raise ValueError(f"{label} counts do not reconcile: {grouped} != {eligible}.")
-        checks.append({
-            "grouping": label, "eligible_records": eligible,
-            "excluded_records": len(df) - eligible, "grouped_total": grouped,
-        })
+        total = int(table["collisions"].sum())
+        if total != eligible:
+            raise ValueError(f"{name} total does not match the eligible records.")
+        checks.append({"grouping": name, "eligible_records": eligible,
+                       "excluded_records": len(df) - eligible, "grouped_total": total})
     return pd.DataFrame(checks)
 
-
+# VERIFYING THE DATA IS WORKING GOOD ARE HOW MUCH ACCURATE  
 def key_findings(df):
-    """Generate evidence-supported text; include all ties for the top count."""
-    counts = df.groupby("OCC_YEAR").size().reindex(YEARS, fill_value=0)
-    change = int(counts.loc[2025] - counts.loc[2024])
-    if counts.loc[2024]:
-        percent = change / counts.loc[2024] * 100
-        annual = (
-            f"Reported records changed from {counts.loc[2024]:,} in 2024 to "
-            f"{counts.loc[2025]:,} in 2025 ({change:+,}; {percent:+.2f}%)."
-        )
-    else:
-        annual = "No 2024 records are available for a year-over-year comparison."
+    """Compare the years and show each highest-count table, including ties."""
+    # 1. Count the records in each year and subtract the two totals.
+    total_2024 = len(df[df["OCC_YEAR"] == 2024])
+    total_2025 = len(df[df["OCC_YEAR"] == 2025])
+    difference = total_2025 - total_2024
 
+    # 2. Keep the year/month rows with the largest count.
     monthly = collisions_by_month(df)
-    findings = [annual]
-    if monthly["collisions"].sum() == 0:
-        findings.append("No valid month values are available.")
-    else:
-        maximum = monthly["collisions"].max()
-        peaks = monthly[monthly["collisions"] == maximum]
-        month_names = []
-        for _, row in peaks.iterrows():
-            month_names.append(f"{row['OCC_MONTH']} {row['OCC_YEAR']}")
-        month_labels = ", ".join(month_names)
-        findings.append(
-            f"Highest-count year/month: {month_labels}, with {int(maximum):,} records each."
-        )
-    for label, column, summary in [
-        ("hour", "OCC_HOUR", collisions_by_hour(df)),
-        ("weekday", "OCC_DOW", collisions_by_weekday(df)),
-    ]:
-        if not summary["collisions"].sum():
-            findings.append(f"No valid {label} values are available.")
-            continue
-        maximum = int(summary["collisions"].max())
-        values = summary.loc[summary["collisions"] == maximum, column]
-        names = []
-        for value in values:
-            if label == "hour":
-                names.append(f"{int(value):02d}:00-{int(value):02d}:59")
-            else:
-                names.append(str(value))
-        labels = ", ".join(names)
-        findings.append(
-            f"Highest-count {label}: {labels}, with {maximum:,} records each "
-            "across 2024-2025."
-        )
-    return findings
+    valid_months = monthly[monthly["collisions"] > 0]
+    top_months = valid_months[valid_months["collisions"] == valid_months["collisions"].max()]
+
+    # 3. Do the same for hours.
+    hourly = collisions_by_hour(df)
+    valid_hours = hourly[hourly["collisions"] > 0]
+    top_hours = valid_hours[valid_hours["collisions"] == valid_hours["collisions"].max()]
+
+    # 4. Do the same for weekdays.
+    weekdays = collisions_by_weekday(df)
+    valid_days = weekdays[weekdays["collisions"] > 0]
+    top_days = valid_days[valid_days["collisions"] == valid_days["collisions"].max()]
+
+    # Empty peak tables mean no valid records were available for that field.
+    return [
+        f"2024: {total_2024:,}; 2025: {total_2025:,}; difference: {difference:+,} records.",
+        "Highest-count year/month:\n" + top_months.to_string(index=False),
+        "Highest-count hour (0-23):\n" + top_hours.to_string(index=False),
+        "Highest-count weekday:\n" + top_days.to_string(index=False),
+    ]
 
 
-def main():
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--csv", type=Path, default=DEFAULT_CSV, help="Original full CSV path")
-    args = parser.parse_args()
-    df = load_temporal_data(args.csv)
-    print_inspection(df)
-    print("\nReconciliation\n" + verify_group_totals(df).to_string(index=False))
-    for title, summary in [
-        ("Monthly", collisions_by_month(df)),
-        ("Hourly", collisions_by_hour(df)),
-        ("Weekday", collisions_by_weekday(df)),
-    ]:
-        print(f"\n{title}\n{summary.to_string(index=False)}")
-    print("\nFindings")
-    for finding in key_findings(df):
-        print("- " + finding)
+def plot_monthly_comparison(monthly):
+    """Save one monthly comparison plot. A3 remains the full chart task."""
+    fig, ax = plt.subplots(figsize=(10, 6))
+    for year in [2024, 2025]:
+        rows = monthly[monthly["OCC_YEAR"] == year]
+        ax.plot(rows["OCC_MONTH"].astype(str), rows["collisions"], marker="o", label=str(year))
+    ax.set_title("Toronto monthly collision records: 2024 vs 2025")
+    ax.set_xlabel("Month")
+    ax.set_ylabel("Reported collision records")
+    ax.tick_params(axis="x", labelrotation=45)
+    ax.set_ylim(bottom=0)
+    ax.legend()
+    fig.tight_layout(rect=(0, 0.08, 1, 1))
+    fig.text(0.02, 0.02, "Source: Toronto Police Service. Raw counts; not adjusted for traffic volume.", fontsize=9)
+    output = "ticket_A2_monthly_comparison.png"
+    fig.savefig(output, dpi=150)
+    plt.close(fig)
+    return output
 
 
 if __name__ == "__main__":
-    main()
+    # Run from person_1. This reads the separate CSV saved by ticket_A1.py.
+    data = pd.read_csv("ticket_A1_prepared_data.csv", dtype={"OCC_YEAR": "Int64", "OCC_HOUR": "Int64"})
+    data = data[data["OCC_YEAR"].isin([2024, 2025])].copy()
+    if data.empty:
+        raise ValueError("No 2024 or 2025 records found. Check the A1 CSV.")
+
+    monthly = collisions_by_month(data)
+    hourly = collisions_by_hour(data)
+    weekday = collisions_by_weekday(data)
+    yearly = collisions_by_year(data)
+
+    print("Selected records:", len(data))
+    print("\nCount checks:\n", verify_group_totals(data).to_string(index=False))
+    for title, table in [("Monthly", monthly), ("Hourly", hourly), ("Weekday", weekday), ("Yearly", yearly)]:
+        print(f"\n{title}:\n{table.to_string(index=False)}")
+    print("\nFindings:")
+    for finding in key_findings(data):
+        print(finding)
+    print("\nSaved plot:", plot_monthly_comparison(monthly))
