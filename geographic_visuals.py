@@ -3,6 +3,7 @@ from geographic_analysis import load_location_data
 from geographic_analysis import top_neighbourhoods
 from geographic_analysis import pedestrians_involved
 from geographic_analysis import bicycle_involved
+from geographic_analysis import injury_collision_involved
 
 def plot_top_neighbourhood(df):
 
@@ -20,7 +21,7 @@ def plot_top_neighbourhood(df):
 
     plt.ylabel("Neighbourhood in Toronto")
 
-    plt.xlabel("No of Collisions")
+    plt.xlabel("Number of Collisions")
 
     plt.gca().bar_label(bar, padding=3)
 
@@ -45,13 +46,40 @@ def plot_pedestrian_and_bicycle_involved(df):
     
     plt.ylabel("Type of Road User")
     
-    plt.xlabel("No of Collisions")
+    plt.xlabel("Number of Collisions")
     
     plt.gca().bar_label(bar, padding=3)
     
     plt.show()
 
-if __name__ == "__main__":
-    #plot_top_neighbourhood(load_location_data("RawData/Traffic Collisions - 4326.csv"))
-    plot_pedestrian_and_bicycle_involved(load_location_data("RawData/Traffic Collisions - 4326.csv"))
+def plot_injury_and_non_injury(df):
 
+    injury = injury_collision_involved(df)
+    total_raw_data = len(df)
+    non_injury = total_raw_data - injury
+
+    plt.figure(figsize=(14,7))
+
+    categories = ["Injury", "Non Injury"]
+    value = [injury, non_injury]
+
+    bar = plt.barh(categories, value)
+
+    plt.title("Injury vs Non-Injury in Traffic Collisions (2024-2025)")
+
+    plt.ylabel("Injured vs Non-Injured")
+
+    plt.xlabel("Number of Collisions")
+
+    plt.gca().bar_label(bar, padding=3)
+
+    plt.margins(0.1)
+
+    plt.show()
+
+
+
+if __name__ == "__main__":
+    plot_top_neighbourhood(load_location_data("RawData/Traffic Collisions - 4326.csv"))
+    plot_pedestrian_and_bicycle_involved(load_location_data("RawData/Traffic Collisions - 4326.csv"))
+    plot_injury_and_non_injury(load_location_data("RawData/Traffic Collisions - 4326.csv"))
