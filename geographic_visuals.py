@@ -80,6 +80,9 @@ def plot_injury_and_non_injury(df):
 
 
 if __name__ == "__main__":
-    plot_top_neighbourhood(load_location_data("RawData/Traffic Collisions - 4326.csv"))
-    plot_pedestrian_and_bicycle_involved(load_location_data("RawData/Traffic Collisions - 4326.csv"))
-    plot_injury_and_non_injury(load_location_data("RawData/Traffic Collisions - 4326.csv"))
+
+    df = load_location_data("RawData/Traffic Collisions - 4326.csv")
+
+    plot_top_neighbourhood(df)
+    plot_pedestrian_and_bicycle_involved(df)
+    plot_injury_and_non_injury(df)
