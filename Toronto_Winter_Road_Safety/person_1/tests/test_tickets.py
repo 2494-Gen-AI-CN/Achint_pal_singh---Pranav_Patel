@@ -11,9 +11,10 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from ticket_1_prepare_data import (
-    DEFAULT_CSV, MONTHS, REFERENCE_COUNTS, WEEKDAYS, load_temporal_data,
-)
+from ticket_A1 import MONTHS, WEEKDAYS, load_temporal_data
+
+DEFAULT_CSV = Path(__file__).resolve().parents[2] / "data/raw/collisions/Traffic Collisions - 4326 (1).csv"
+REFERENCE_COUNTS = {2024: 70181, 2025: 67546}
 from ticket_2_analyze_patterns import (
     collisions_by_hour, collisions_by_month, collisions_by_weekday,
     key_findings, verify_group_totals,
@@ -38,13 +39,13 @@ def test_loader_retains_rows_and_reports_invalid_fields(example_csv):
     before = example_csv.read_bytes()
     df = load_temporal_data(example_csv)
     assert len(df) == 6
-    assert df.attrs["inspection"]["missing_or_invalid"] == {
+    assert df[["OCC_MONTH", "OCC_HOUR", "OCC_DOW"]].isna().sum().to_dict() == {
         "OCC_MONTH": 1, "OCC_HOUR": 4, "OCC_DOW": 1,
     }
     assert df["OCC_HOUR"].dropna().tolist() == [23, 0]
     assert df["OCC_MONTH"].cat.categories.tolist() == MONTHS
     assert df["OCC_DOW"].cat.categories.tolist() == WEEKDAYS
-    assert df.attrs["inspection"]["rows_by_year"] == {2024: 4, 2025: 2}
+    assert df["OCC_YEAR"].value_counts().to_dict() == {2024: 4, 2025: 2}
     assert example_csv.read_bytes() == before
 
 
@@ -82,7 +83,7 @@ def test_empty_period_is_explicit_error(tmp_path):
         "OCC_YEAR": [2023], "OCC_MONTH": ["January"],
         "OCC_DOW": ["Monday"], "OCC_HOUR": [12],
     }).to_csv(path, index=False)
-    with pytest.raises(ValueError, match="no records for 2024 or 2025"):
+    with pytest.raises(ValueError, match="No records found for 2024 or 2025"):
         load_temporal_data(path)
 
 
@@ -95,8 +96,8 @@ def test_missing_column_is_explicit_error(tmp_path):
 
 @pytest.mark.skipif(not DEFAULT_CSV.exists(), reason="Original local CSV not downloaded")
 def test_real_source_totals_reconcile():
-    df = load_temporal_data()
-    assert df.attrs["inspection"]["rows_by_year"] == REFERENCE_COUNTS
+    df = load_temporal_data(DEFAULT_CSV)
+    assert df["OCC_YEAR"].value_counts().to_dict() == REFERENCE_COUNTS
     assert len(df) == 137727
     checks = verify_group_totals(df)
     assert checks["excluded_records"].eq(0).all()

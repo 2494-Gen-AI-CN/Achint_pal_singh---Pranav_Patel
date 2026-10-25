@@ -36,7 +36,7 @@ def load_temporal_data(csv_path):
     # 5. Return the prepared table with fresh row numbers.
     return df.reset_index(drop=True)
 
-
+# entry point check : import to excute file from the source folder 
 if __name__ == "__main__":
     # Run from the person_1 folder. Change this path if your CSV is elsewhere.
     csv_path = "../data/raw/collisions/Traffic Collisions - 4326 (1).csv"

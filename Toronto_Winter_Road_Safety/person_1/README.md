@@ -6,12 +6,12 @@ in 2024 and 2025?** It runs without any Person 2 code or results.
 
 ## Start here
 
-1. A1: `ticket_1_prepare_data.py` loads the CSV and checks the time fields.
+1. A1: `ticket_A1.py` loads the CSV and checks the time fields.
 2. A2: `ticket_2_analyze_patterns.py` calculates counts and findings.
 3. A3: `ticket_3_create_charts.py` saves the three charts.
 4. A4: `ticket_4_temporal_report.ipynb` presents the tables, charts and findings.
 
-Run them in ticket order. A2 uses A1's loader, A3 uses A1 and A2,
+Run them in ticket order. A1 saves `ticket_A1_prepared_data.csv`. A2 and A3 read that CSV,
 and the A4 notebook brings the three scripts together. They remain independent
 of Person 2's work.
 
@@ -30,8 +30,6 @@ of Person 2's work.
 - **A4 - report:** the notebook calls these functions and displays their results.
   Its finding sentences are calculated from the data rather than typed-in totals.
 
-`df.attrs["inspection"]` is a dictionary attached to the DataFrame. It stores
-the row counts and missing-value checks for the report; it does not add data rows.
 The `if __name__ == "__main__"` block runs the command-line part only when you
 run that file directly, so importing functions into the notebook does not run it.
 
@@ -41,15 +39,14 @@ Use the original full dataset supplied for this project:
 
 `../data/raw/collisions/Traffic Collisions - 4326 (1).csv`
 
-That path is relative to this folder. The loader resolves its default path from
-the script's location, so the command can run from a different working directory.
-For a differently named or relocated file, pass `--csv "C:\path\to\your.csv"`.
-In the notebook, change `CSV_PATH` in the setup cell.
+Run A1 from this folder; it saves `ticket_A1_prepared_data.csv` here.
+A2, A3 and the notebook use that prepared CSV. If the original file moves,
+change `csv_path` in A1. The old loader has been removed.
 
 Source: [Toronto Police Service Motor Vehicle Collisions](https://data.torontopolice.on.ca/datasets/bc4c72a793014a55a674984ef175a6f3_0/explore).
 The supplied CSV is the local input; do not substitute the old Q1-only export.
 Both collaborators obtain their own copy, and raw data is excluded by the
-project-level `.gitignore`. No raw CSV is overwritten or exported by these scripts.
+project-level `.gitignore`. The original raw CSV is never overwritten; A1 exports a separate prepared CSV.
 
 Verified baseline for this file:
 
@@ -61,7 +58,7 @@ Verified baseline for this file:
 | Selected total | 137,727 |
 
 These are snapshot checks, not constants used to manufacture summary values.
-The loader prints a notice if another source snapshot has different totals.
+Check the printed year counts when using a different source snapshot.
 
 ## Setup and commands (Windows PowerShell)
 
@@ -78,7 +75,7 @@ python -m venv .venv
 Run A1 to inspect and prepare the data:
 
 ```powershell
-.\.venv\Scripts\python.exe ticket_1_prepare_data.py
+.\.venv\Scripts\python.exe ticket_A1.py
 ```
 
 Run A2 for the reconciliations, summaries and findings:
@@ -155,7 +152,7 @@ can affect comparisons.
 
 ## Deliverables
 
-- `ticket_1_prepare_data.py`: A1 loading, preparation and inspection.
+- `ticket_A1.py`: A1 loading, preparation and inspection.
 - `ticket_2_analyze_patterns.py`: A2 summary functions and findings.
 - `ticket_3_create_charts.py`: A3 chart generation.
 - `figures/monthly_collisions_2024_vs_2025.png`

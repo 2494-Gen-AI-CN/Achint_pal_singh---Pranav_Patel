@@ -1,0 +1,23 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Person 1: temporal charts",
+      "type": "debugpy",
+      "request": "launch",
+      "python": "${workspaceFolder}/Toronto_Winter_Road_Safety/person_1/.venv/Scripts/python.exe",
+      "program": "${workspaceFolder}/Toronto_Winter_Road_Safety/person_1/temporal_visuals.py",
+      "cwd": "${workspaceFolder}/Toronto_Winter_Road_Safety/person_1",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Person 1: temporal analysis",
+      "type": "debugpy",
+      "request": "launch",
+      "python": "${workspaceFolder}/Toronto_Winter_Road_Safety/person_1/.venv/Scripts/python.exe",
+      "program": "${workspaceFolder}/Toronto_Winter_Road_Safety/person_1/temporal_analysis.py",
+      "cwd": "${workspaceFolder}/Toronto_Winter_Road_Safety/person_1",
+      "console": "integratedTerminal"
+    }
+  ]
+}

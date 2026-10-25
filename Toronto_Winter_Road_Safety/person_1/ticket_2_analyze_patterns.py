@@ -11,17 +11,17 @@ from ticket_A1 import MONTHS, WEEKDAYS
 # COLLISON HAS BEEN OCCUR IN THE MONTHS 
 def collisions_by_month(df):
     """Count each year/month pair, ordered January to December."""
-    data = df.copy()
-    data["OCC_MONTH"] = pd.Categorical(data["OCC_MONTH"], categories=MONTHS, ordered=True)
-    counts = data.groupby(["OCC_YEAR", "OCC_MONTH"], observed=False).size() # TO SEE IF WE ARE GETTING ALL THE MONTHS 
-    return counts.reset_index(name="collisions")
+    data = df.copy() # took copt of dataframe 
+    data["OCC_MONTH"] = pd.Categorical(data["OCC_MONTH"], categories=MONTHS, ordered=True) # take adat into catgories decideding there crum 
+    counts = data.groupby(["OCC_YEAR", "OCC_MONTH"], observed=False).size() # TO SEE IF WE ARE GETTING ALL THE MONTHS and chehcking there size and to see the data from every month 
+    return counts.reset_index(name="collisions") # naming count colum to collison 
 
 
 def collisions_by_hour(df):
     """Count each hour, ordered 0 to 23, combining both years."""
     counts = df["OCC_HOUR"].value_counts()
     counts = counts.reindex(np.arange(24), fill_value=0)
-    return counts.rename_axis("OCC_HOUR").reset_index(name="collisions")
+    return counts.rename_axis("OCC_HOUR").reset_index(name="collisions") # 
 
 
 def collisions_by_weekday(df):
@@ -35,7 +35,7 @@ def collisions_by_year(df):
     counts = df["OCC_YEAR"].value_counts().reindex([2024, 2025], fill_value=0)
     return counts.rename_axis("OCC_YEAR").reset_index(name="collisions")
 
-
+# analyzing the patern on the basis of the upward findings 
 def verify_group_totals(df):
     """Check each count table against rows with that time value present."""
     checks = []
@@ -62,8 +62,8 @@ def key_findings(df):
 
     # 2. Keep the year/month rows with the largest count.
     monthly = collisions_by_month(df)
-    valid_months = monthly[monthly["collisions"] > 0]
-    top_months = valid_months[valid_months["collisions"] == valid_months["collisions"].max()]
+    valid_months = monthly[monthly["collisions"] > 0] # which rows is having valid months 
+    top_months = valid_months[valid_months["collisions"] == valid_months["collisions"].max()] # it finding the biggest collison month :December2024
 
     # 3. Do the same for hours.
     hourly = collisions_by_hour(df)
@@ -73,7 +73,7 @@ def key_findings(df):
     # 4. Do the same for weekdays.
     weekdays = collisions_by_weekday(df)
     valid_days = weekdays[weekdays["collisions"] > 0]
-    top_days = valid_days[valid_days["collisions"] == valid_days["collisions"].max()]
+    top_days = valid_days[valid_days["collisions"] == valid_days["collisions"].max()] # friday according ti the finding 
 
     # Empty peak tables mean no valid records were available for that field.
     return [

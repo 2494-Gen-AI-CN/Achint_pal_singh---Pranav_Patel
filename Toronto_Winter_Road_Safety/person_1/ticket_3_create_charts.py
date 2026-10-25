@@ -7,10 +7,12 @@ matplotlib.use("Agg")
 
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 
-from ticket_1_prepare_data import (
-    DEFAULT_CSV, MONTHS, PERSON_DIR, YEARS, load_temporal_data,
-)
+from ticket_A1 import MONTHS
+
+PERSON_DIR = Path(__file__).resolve().parent
+YEARS = [2024, 2025]
 from ticket_2_analyze_patterns import (
     collisions_by_month, collisions_by_hour, collisions_by_weekday,
     verify_group_totals,
@@ -55,7 +57,7 @@ def save_chart(fig, ax, filename, df, column):
     return filename
 
 
-def save_temporal_charts(df, output_dir=PERSON_DIR / "figures"):
+def save_temporal_charts(df, output_dir=PERSON_DIR):
 
     verify_group_totals(df)
 
@@ -136,7 +138,11 @@ def save_temporal_charts(df, output_dir=PERSON_DIR / "figures"):
 
 
 def main():
-    df = load_temporal_data(DEFAULT_CSV)
+    df = pd.read_csv(PERSON_DIR / "ticket_A1_prepared_data.csv",
+                     dtype={"OCC_YEAR": "Int64", "OCC_HOUR": "Int64"})
+    df = df[df["OCC_YEAR"].isin(YEARS)].copy()
+    if df.empty:
+        raise ValueError("No 2024 or 2025 records found. Run ticket_A1.py first.")
 
     charts = save_temporal_charts(df)
 
