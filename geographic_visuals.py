@@ -5,6 +5,7 @@ from geographic_analysis import pedestrians_involved
 from geographic_analysis import bicycle_involved
 from geographic_analysis import injury_collision_involved
 
+# Function to plot top 10 Neighbourhood 
 def plot_top_neighbourhood(df):
 
     top_10 = top_neighbourhoods(df, 10)
@@ -27,7 +28,7 @@ def plot_top_neighbourhood(df):
 
     plt.show()
 
-
+# Function to plot Collision based on road user
 def plot_pedestrian_and_bicycle_involved(df):
 
     pedestrian = pedestrians_involved(df)
@@ -52,11 +53,12 @@ def plot_pedestrian_and_bicycle_involved(df):
     
     plt.show()
 
+# Function to plot number of collision classified as injury vs non-injury
 def plot_injury_and_non_injury(df):
 
-    injury = injury_collision_involved(df)
-    total_raw_data = len(df)
-    non_injury = total_raw_data - injury
+    injury = injury_collision_involved(df) # 20,655
+    total_raw_data = len(df) # 137,727
+    non_injury = total_raw_data - injury # 117, 072
 
     plt.figure(figsize=(14,7))
 
@@ -78,7 +80,7 @@ def plot_injury_and_non_injury(df):
     plt.show()
 
 
-
+# Calling the functions 
 if __name__ == "__main__":
 
     df = load_location_data("RawData/Traffic Collisions - 4326.csv")
