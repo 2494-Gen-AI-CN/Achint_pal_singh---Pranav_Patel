@@ -109,11 +109,3 @@ if __name__ == "__main__":
 #     print(filter_by_injury_involved)
 
 
-# # Filtering by missing entry in neighbourhood 
-# filter_by_missing_neighbourhood = filter_by_year[(filter_by_year["NEIGHBOURHOOD_158"] == "NSA") | (filter_by_year["NEIGHBOURHOOD_158"].isna()) ]
-
-# # Filtering by motorcycle collision 
-#filter_by_motorcycle_collision = filter_by_year[(filter_by_year["MOTORCYCLE"] == "YES") & (filter_by_year["INJURY_COLLISIONS"] == "YES")]
-
-# # Filtering by passengers involved 
-#filter_by_passenger_involved = filter_by_year[filter_by_year["PASSENGER"] == "YES"]
