@@ -27,46 +27,6 @@ def load_location_data(csv_filepath):
     # Return the final filteration 
     return final_filteration
 
-# # Validating Neighbourhood_158 column 
-# validate_neighbourhood = filter_by_year["NEIGHBOURHOOD_158"].value_counts(dropna=False)
-
-# # Validating Bicycle
-# validate_bicycle = filter_by_year["BICYCLE"].value_counts(dropna=False)
-
-# # Validating Pedestrian 
-# validate_pedestrian = filter_by_year["PEDESTRIAN"].value_counts(dropna=False)
-
-# # Validating Injury Collisions 
-# validate_injury_collisions = filter_by_year["INJURY_COLLISIONS"].value_counts(dropna=False)
-
-# # Filtering by valid entries in neighbourhood 
-#     filter_by_contains_neighbourhood = filter_by_year[(filter_by_year["NEIGHBOURHOOD_158"] != "NSA") & (filter_by_year["NEIGHBOURHOOD_158"].notna()) ]
-
-# # Filtering by bicycle involved 
-#     filter_by_bicycle_involved = filter_by_year[filter_by_year["BICYCLE"] == "YES"]
-
-# # Filtering by pedestrian involved 
-#     filter_by_pedestrian_involved = filter_by_year[filter_by_year["PEDESTRIAN"] == "YES"]
-
-# # Filtering by injury collision 
-#     filter_by_injury_involved = filter_by_year[filter_by_year["INJURY_COLLISIONS"] == "YES"]
-
-#     print(filter_by_contains_neighbourhood)
-#     print(filter_by_bicycle_involved)
-#     print(filter_by_pedestrian_involved)
-#     print(filter_by_injury_involved)
-
-
-# # Filtering by missing entry in neighbourhood 
-# filter_by_missing_neighbourhood = filter_by_year[(filter_by_year["NEIGHBOURHOOD_158"] == "NSA") | (filter_by_year["NEIGHBOURHOOD_158"].isna()) ]
-
-# # Filtering by motorcycle collision 
-#filter_by_motorcycle_collision = filter_by_year[(filter_by_year["MOTORCYCLE"] == "YES") & (filter_by_year["INJURY_COLLISIONS"] == "YES")]
-
-# # Filtering by passengers involved 
-#filter_by_passenger_involved = filter_by_year[filter_by_year["PASSENGER"] == "YES"]
-
-
 # END OF B1 Ticket
 
 # Function to return top 10 neighbourhoods with most collisions
@@ -120,3 +80,42 @@ if __name__ == "__main__":
     print(result_injury)
 
 # END of B2 ticket
+
+# # Validating Neighbourhood_158 column 
+# validate_neighbourhood = filter_by_year["NEIGHBOURHOOD_158"].value_counts(dropna=False)
+
+# # Validating Bicycle
+# validate_bicycle = filter_by_year["BICYCLE"].value_counts(dropna=False)
+
+# # Validating Pedestrian 
+# validate_pedestrian = filter_by_year["PEDESTRIAN"].value_counts(dropna=False)
+
+# # Validating Injury Collisions 
+# validate_injury_collisions = filter_by_year["INJURY_COLLISIONS"].value_counts(dropna=False)
+
+# # Filtering by valid entries in neighbourhood 
+#     filter_by_contains_neighbourhood = filter_by_year[(filter_by_year["NEIGHBOURHOOD_158"] != "NSA") & (filter_by_year["NEIGHBOURHOOD_158"].notna()) ]
+
+# # Filtering by bicycle involved 
+#     filter_by_bicycle_involved = filter_by_year[filter_by_year["BICYCLE"] == "YES"]
+
+# # Filtering by pedestrian involved 
+#     filter_by_pedestrian_involved = filter_by_year[filter_by_year["PEDESTRIAN"] == "YES"]
+
+# # Filtering by injury collision 
+#     filter_by_injury_involved = filter_by_year[filter_by_year["INJURY_COLLISIONS"] == "YES"]
+
+#     print(filter_by_contains_neighbourhood)
+#     print(filter_by_bicycle_involved)
+#     print(filter_by_pedestrian_involved)
+#     print(filter_by_injury_involved)
+
+
+# # Filtering by missing entry in neighbourhood 
+# filter_by_missing_neighbourhood = filter_by_year[(filter_by_year["NEIGHBOURHOOD_158"] == "NSA") | (filter_by_year["NEIGHBOURHOOD_158"].isna()) ]
+
+# # Filtering by motorcycle collision 
+#filter_by_motorcycle_collision = filter_by_year[(filter_by_year["MOTORCYCLE"] == "YES") & (filter_by_year["INJURY_COLLISIONS"] == "YES")]
+
+# # Filtering by passengers involved 
+#filter_by_passenger_involved = filter_by_year[filter_by_year["PASSENGER"] == "YES"]
