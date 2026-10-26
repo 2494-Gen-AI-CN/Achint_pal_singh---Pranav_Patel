@@ -3,8 +3,6 @@
 import pandas as pd
 import numpy as np
 
-df = pd.read_csv("RawData/Traffic Collisions - 4326.csv")
-
 def load_location_data(csv_filepath):
     # Loading .csv file
     df = pd.read_csv(csv_filepath, encoding="utf-8")
