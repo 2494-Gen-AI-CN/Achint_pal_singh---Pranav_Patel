@@ -28,7 +28,7 @@ def load_location_data(csv_filepath):
 # END OF B1 Ticket
 
 # Function to return top 10 neighbourhoods with most collisions
-def top_neighbourhoods(df, top_n=10):
+def top_neighbourhoods(df, top_n):
 
     records_without_NSA_and_NaN = df[(df["NEIGHBOURHOOD_158"] != "NSA") & (df["NEIGHBOURHOOD_158"].notna())]
     top_ten_neighbourhood = records_without_NSA_and_NaN["NEIGHBOURHOOD_158"].value_counts()
@@ -65,17 +65,23 @@ if __name__ == "__main__":
     prepared_data = load_location_data(
         "RawData/Traffic Collisions - 4326.csv"
     )
-    print(prepared_data.shape)
+    
+    print("Number of rows and columns in our filtered dataset: ", prepared_data.shape)
+
     result_top = top_neighbourhoods(prepared_data, 10)
-    print(result_top)
+    print("Top 10 neighbourhoods: ", result_top)
+
     result_location_status = classify_location_status(prepared_data)
     print(result_location_status["Location_status"].value_counts())
+
     result_pedestrian = pedestrians_involved(prepared_data)
-    print(result_pedestrian)
+    print("Number of pedestrain involved: ", result_pedestrian)
+
     result_bicycle = bicycle_involved(prepared_data)
-    print(result_bicycle)
+    print("Number of bicycle involved: ", result_bicycle)
+
     result_injury = injury_collision_involved(prepared_data)
-    print(result_injury)
+    print("Number of injury classified collisions: ", result_injury)
 
 # END of B2 ticket
 
